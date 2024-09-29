@@ -77,7 +77,8 @@
       "js",
       "json",
       "node"
-    ]
+    ],
+    "verbose": true
   },
   "engines": {
     "node": ">=18.13.0",
