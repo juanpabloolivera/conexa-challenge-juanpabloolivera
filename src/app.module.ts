@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/challenge-db?retryWrites=true&w=majority&appName=conexa-challenge&authSource=admin`,
+      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/challenge-db?retryWrites=true&w=majority&appName=conexa-challenge&authSource=admin`,
     ),
     AuthModule,
     FilmModule,
