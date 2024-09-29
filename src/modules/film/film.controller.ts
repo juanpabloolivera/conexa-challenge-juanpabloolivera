@@ -41,6 +41,7 @@ export class FilmController {
     @Inject(Logger) private readonly logger: Logger,
   ) {}
 
+  //Endpoint para obtener la lista de películas
   @Get()
   @GetAllFilmsSwagger()
   async getAllFilms(): Promise<IFilm[]> {
@@ -53,6 +54,7 @@ export class FilmController {
     }
   }
 
+  //Endpoint para crear una nueva película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Post()
   @Roles(RolesEnum.ADMIN)
   @CreateFilmSwagger()
@@ -74,6 +76,7 @@ export class FilmController {
     }
   }
 
+  //Endpoint para obtener los detalles de una película específica. Solo los "Usuarios Regulares" deberían tener acceso a este endpoint.
   @Get(':id')
   @Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
@@ -94,6 +97,7 @@ export class FilmController {
     }
   }
 
+  //Endpoint para actualizar la información de una película existente. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Put()
   @Roles(RolesEnum.ADMIN)
   @UpdateFilmSwagger()
@@ -115,6 +119,7 @@ export class FilmController {
     }
   }
 
+  //Endpoint para eliminar una película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Delete()
   @Roles(RolesEnum.ADMIN)
   @DeleteFilmSwagger()

@@ -23,6 +23,7 @@ export class AuthController {
     @Inject(Logger) private readonly logger: Logger,
   ) {}
 
+  //Endpoint para registro de nuevos usuarios.
   @SignupSwagger()
   @Post('/signup')
   async signUp(@Body() signUpDTO: SignUpDTO): Promise<{ token: string }> {
@@ -46,6 +47,7 @@ export class AuthController {
     }
   }
 
+  //Endpoint para login de usuarios y obtención de token de acceso.
   @LoginSwagger()
   @Post('/login')
   async login(@Body() loginDTO: LoginDTO): Promise<{ token: string }> {
