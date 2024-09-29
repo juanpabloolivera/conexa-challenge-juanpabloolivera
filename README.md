@@ -26,6 +26,14 @@ JWT_EXPIRE=<jwt_expire>
 JWT_SECRET=<jwt_secret>
 ```
 
+## MongoDB Connection URL
+
+To connect to MongoDB (e.g., via Compass), use the following connection string:
+
+```plaintext
+mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/challenge-db?retryWrites=true&w=majority&appName=conexa-challenge&authSource=admin
+```
+
 ## Running the app
 
 ```bash
@@ -45,7 +53,11 @@ $ npm run test
 
 ## API Documentation
 
-Access the API documentation via Swagger at `http://localhost:3000/api` or `https://conexa-challenge-juanpabloolivera.onrender.com/api`.
+Access the API documentation via Swagger:
+
+**Local Version**: http://localhost:3000/api
+
+**Deployed Version**: https://conexa-challenge-juanpabloolivera.onrender.com/api
 
 ## Usage Example: Using cURL
 
