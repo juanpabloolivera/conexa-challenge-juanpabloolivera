@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,7 +16,6 @@ import { FilmService } from './film.service';
 import { CreateFilmDTO } from '../../core/dto/create-film.dto';
 import { UpdateFilmDTO } from '../../core/dto/update-film.dto';
 import { DeleteFilmDTO } from '../../core/dto/delete-film.dto';
-import { GetFilmDTO } from '../../core/dto/get-film.dto';
 import { isMongoId } from 'class-validator';
 import { Types } from 'mongoose';
 import { IFilm } from '../../database/interface/film.interface';
@@ -35,74 +35,94 @@ import {
 @UseGuards(AuthGuard(), AllowByRoleGuard)
 @ApiBearerAuth()
 export class FilmController {
+  private readonly logger = new Logger(FilmController.name);
+
   constructor(private filmService: FilmService) {}
 
-  //Endpoint para obtener la lista de películas.
   @Get()
   @GetAllFilmsSwagger()
   async getAllFilms(): Promise<IFilm[]> {
-    return this.filmService.findAll();
+    try {
+      this.logger.log('GET /film - Fetching all films');
+      return await this.filmService.findAll();
+    } catch (error) {
+      this.logger.error(`Error in GET /film: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
-  //Endpoint para crear una nueva película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Post()
   @Roles(RolesEnum.ADMIN)
   @CreateFilmSwagger()
-  async createFilm(
-    @Body()
-    film: CreateFilmDTO,
-  ): Promise<IFilm> {
-    const isDuplicatedName = await this.filmService.validateDuplicatedName(
-      film,
-    );
-    if (isDuplicatedName) {
-      throw new BadRequestException(
-        "There's already a film with that name. Copyright. Elegí otro",
+  async createFilm(@Body() film: CreateFilmDTO): Promise<IFilm> {
+    try {
+      this.logger.log('POST /film - Creating a new film');
+      const isDuplicatedName = await this.filmService.validateDuplicatedName(
+        film,
       );
+      if (isDuplicatedName) {
+        throw new BadRequestException(
+          "There's already a film with that name. Copyright. Elegí otro",
+        );
+      }
+      return await this.filmService.create(film);
+    } catch (error) {
+      this.logger.error(`Error in POST /film: ${error.message}`, error.stack);
+      throw error;
     }
-    return this.filmService.create(film);
   }
 
-  //Endpoint para obtener los detalles de una película específica. Solo los "Usuarios Regulares" deberían tener acceso a este endpoint.
   @Get(':id')
-  @Roles(RolesEnum.REGULAR_USER)
+  //@Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
   async getFilm(@Param('id') id: string): Promise<IFilm> {
-    const isValidId = isMongoId(id);
-    if (!isValidId) {
-      throw new BadRequestException('Invalid id.');
+    try {
+      this.logger.log(`GET /film/${id} - Fetching film details`);
+      const isValidId = isMongoId(id);
+      if (!isValidId) {
+        throw new BadRequestException('Invalid id.');
+      }
+      return await this.filmService.findById(new Types.ObjectId(id));
+    } catch (error) {
+      this.logger.error(
+        `Error in GET /film/${id}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
     }
-    return this.filmService.findById(new Types.ObjectId(id));
   }
 
-  //Endpoint para actualizar la información de una película existente. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Put()
   @Roles(RolesEnum.ADMIN)
   @UpdateFilmSwagger()
-  async updateFilm(
-    @Body()
-    film: UpdateFilmDTO,
-  ): Promise<IFilm> {
-    const isDuplicatedName = await this.filmService.validateDuplicatedName(
-      film,
-    );
-
-    if (isDuplicatedName) {
-      throw new BadRequestException(
-        "There's already a film with that name. Copyright. Elegí otro",
+  async updateFilm(@Body() film: UpdateFilmDTO): Promise<IFilm> {
+    try {
+      this.logger.log('PUT /film - Updating film');
+      const isDuplicatedName = await this.filmService.validateDuplicatedName(
+        film,
       );
+      if (isDuplicatedName) {
+        throw new BadRequestException(
+          "There's already a film with that name. Copyright. Elegí otro",
+        );
+      }
+      return await this.filmService.updateById(film);
+    } catch (error) {
+      this.logger.error(`Error in PUT /film: ${error.message}`, error.stack);
+      throw error;
     }
-    return this.filmService.updateById(film);
   }
 
-  //Endpoint para eliminar una película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Delete()
   @Roles(RolesEnum.ADMIN)
   @DeleteFilmSwagger()
-  async deleteFilm(
-    @Body()
-    film: DeleteFilmDTO,
-  ): Promise<IFilm> {
-    return this.filmService.deleteById(film);
+  async deleteFilm(@Body() film: DeleteFilmDTO): Promise<IFilm> {
+    try {
+      this.logger.log('DELETE /film - Deleting film');
+      return await this.filmService.deleteById(film);
+    } catch (error) {
+      this.logger.error(`Error in DELETE /film: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 }
