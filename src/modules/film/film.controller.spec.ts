@@ -105,7 +105,7 @@ describe('FilmController', () => {
     it('should return a film by id', async () => {
       const id = mockFilm._id;
       jest.spyOn(service, 'findById').mockResolvedValue(mockFilm);
-      const result = await controller.getFilm(id);
+      const result = await controller.getFilm(id.toString());
       expect(result).toEqual(mockFilm);
       expect(service.findById).toHaveBeenCalledWith(id);
     });
@@ -117,7 +117,9 @@ describe('FilmController', () => {
         .mockRejectedValue(
           new NotFoundException(`Film with ID "${id}" not found.`),
         );
-      await expect(controller.getFilm(id)).rejects.toThrow(NotFoundException);
+      await expect(controller.getFilm(id.toString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

@@ -16,6 +16,8 @@ import { CreateFilmDTO } from '../../core/dto/create-film.dto';
 import { UpdateFilmDTO } from '../../core/dto/update-film.dto';
 import { DeleteFilmDTO } from '../../core/dto/delete-film.dto';
 import { GetFilmDTO } from '../../core/dto/get-film.dto';
+import { isMongoId } from 'class-validator';
+import { Types } from 'mongoose';
 import { IFilm } from '../../database/interface/film.interface';
 import { AllowByRoleGuard } from '../../core/guard/allow-by-role.guard';
 import { Roles } from '../../core/decorator/roles.decorator';
@@ -65,11 +67,12 @@ export class FilmController {
   @Get(':id')
   @Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
-  async getFilm(
-    @Param('id')
-    { _id }: GetFilmDTO,
-  ): Promise<IFilm> {
-    return this.filmService.findById(_id);
+  async getFilm(@Param('id') id: string): Promise<IFilm> {
+    const isValidId = isMongoId(id);
+    if (!isValidId) {
+      throw new BadRequestException('Invalid id.');
+    }
+    return this.filmService.findById(new Types.ObjectId(id));
   }
 
   //Endpoint para actualizar la información de una película existente. Solo los "Administradores" deberían tener acceso a este endpoint.
