@@ -17,8 +17,7 @@ import { FilmService } from './film.service';
 import { CreateFilmDTO } from '../../core/dto/create-film.dto';
 import { UpdateFilmDTO } from '../../core/dto/update-film.dto';
 import { DeleteFilmDTO } from '../../core/dto/delete-film.dto';
-import { isMongoId } from 'class-validator';
-import { Types } from 'mongoose';
+import { GetFilmDTO } from '../../core/dto/get-film.dto';
 import { IFilm } from '../../database/interface/film.interface';
 import { AllowByRoleGuard } from '../../core/guard/allow-by-role.guard';
 import { Roles } from '../../core/decorator/roles.decorator';
@@ -77,20 +76,16 @@ export class FilmController {
   }
 
   //Endpoint para obtener los detalles de una película específica. Solo los "Usuarios Regulares" deberían tener acceso a este endpoint.
-  @Get(':id')
+  @Get(':_id')
   @Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
-  async getFilm(@Param('id') id: string): Promise<IFilm> {
+  async getFilm(@Param() { _id }: GetFilmDTO): Promise<IFilm> {
     try {
-      this.logger.log(`GET /film/${id} - Fetching film details`);
-      const isValidId = isMongoId(id);
-      if (!isValidId) {
-        throw new BadRequestException('Invalid id.');
-      }
-      return await this.filmService.findById(new Types.ObjectId(id));
+      this.logger.log(`GET /film/${_id} - Fetching film details`);
+      return await this.filmService.findById(_id);
     } catch (error) {
       this.logger.error(
-        `Error in GET /film/${id}: ${error.message}`,
+        `Error in GET /film/${_id}: ${error.message}`,
         error.stack,
       );
       throw error;
