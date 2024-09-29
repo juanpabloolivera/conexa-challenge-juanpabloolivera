@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { FilmController } from './film.controller';
@@ -14,6 +14,6 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
   ],
   controllers: [FilmController],
-  providers: [FilmService, FilmJob],
+  providers: [FilmService, FilmJob, Logger],
 })
 export class FilmModule {}
