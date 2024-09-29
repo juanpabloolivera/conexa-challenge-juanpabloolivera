@@ -3,6 +3,8 @@ import { Logger } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { BadRequestException } from '@nestjs/common';
+import { SignUpDTO } from '../../core/dto/signup.dto';
+import { LoginDTO } from '../../core/dto/login.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -41,16 +43,16 @@ describe('AuthController', () => {
   });
 
   describe('signUp', () => {
-    const signUpDTO = {
+    const signUpDTO: SignUpDTO = {
       name: 'Juan Perez',
       email: 'juanperez@javascript.com',
       password: 'juan123',
     };
+
     it('should create a new user and return a token', async () => {
       const expectedResult = { token: 'mockToken' };
 
       mockAuthService.validateDuplicateEmail.mockResolvedValue(false);
-
       mockAuthService.signUp.mockResolvedValue(expectedResult);
 
       const result = await authController.signUp(signUpDTO);
@@ -76,10 +78,11 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    const loginDTO = {
+    const loginDTO: LoginDTO = {
       email: 'juanperez123@hotmail.com',
       password: 'juan123',
     };
+
     it('should return a token when login is successful', async () => {
       const expectedResult = { token: 'mockToken' };
 

@@ -9,6 +9,8 @@ import { NotFoundException } from '@nestjs/common';
 import { AllowByRoleGuard } from '../../core/guard/allow-by-role.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Types } from 'mongoose';
+import { GetFilmDTO } from '../../core/dto/get-film.dto';
+import { DeleteFilmDTO } from '../../core/dto/delete-film.dto';
 
 describe('FilmController', () => {
   let controller: FilmController;
@@ -103,8 +105,8 @@ describe('FilmController', () => {
       };
 
       jest.spyOn(service, 'validateDuplicatedName').mockResolvedValue(false);
-
       jest.spyOn(service, 'create').mockResolvedValue(createdFilm);
+
       const result = await controller.createFilm(createFilmDTO);
       expect(result).toEqual(createdFilm);
       expect(service.create).toHaveBeenCalledWith(createFilmDTO);
@@ -112,12 +114,13 @@ describe('FilmController', () => {
   });
 
   describe('getFilm', () => {
+    const getFilmDTO: GetFilmDTO = { _id: mockFilm._id };
+
     it('should return a film by id', async () => {
-      const id = mockFilm._id;
       jest.spyOn(service, 'findById').mockResolvedValue(mockFilm);
-      const result = await controller.getFilm(id.toString());
+      const result = await controller.getFilm(getFilmDTO);
       expect(result).toEqual(mockFilm);
-      expect(service.findById).toHaveBeenCalledWith(id);
+      expect(service.findById).toHaveBeenCalledWith(getFilmDTO._id);
     });
 
     it('should throw NotFoundException if film is not found', async () => {
@@ -127,54 +130,58 @@ describe('FilmController', () => {
         .mockRejectedValue(
           new NotFoundException(`Film with ID "${id}" not found.`),
         );
-      await expect(controller.getFilm(id.toString())).rejects.toThrow(
+
+      await expect(controller.getFilm(getFilmDTO)).rejects.toThrow(
         NotFoundException,
       );
     });
   });
 
   describe('updateFilm', () => {
+    const updateFilmDTO: UpdateFilmDTO = {
+      _id: mockFilm._id,
+      title: 'Updated Film',
+    };
     it('should update and return the film', async () => {
-      const id = new Types.ObjectId(mockFilm._id);
-      const updateFilmDto: UpdateFilmDTO = { _id: id, title: 'Updated Film' };
-
       jest.spyOn(service, 'validateDuplicatedName').mockResolvedValue(false);
       jest.spyOn(service, 'updateById').mockResolvedValue({
         ...mockFilm,
-        ...updateFilmDto,
+        ...updateFilmDTO,
       });
-      const result = await controller.updateFilm(updateFilmDto);
-      expect(result).toEqual({ ...mockFilm, ...updateFilmDto });
-      expect(service.updateById).toHaveBeenCalledWith(updateFilmDto);
+
+      const result = await controller.updateFilm(updateFilmDTO);
+      expect(result).toEqual({ ...mockFilm, ...updateFilmDTO });
+      expect(service.updateById).toHaveBeenCalledWith(updateFilmDTO);
     });
 
     it('should throw NotFoundException if film to update is not found', async () => {
-      const id = new Types.ObjectId();
-      const updateFilmDto: UpdateFilmDTO = { _id: id, title: 'Updated Film' };
-
       jest.spyOn(service, 'validateDuplicatedName').mockResolvedValue(false);
       jest
         .spyOn(service, 'updateById')
         .mockRejectedValue(
-          new NotFoundException(`Film with ID "${id}" not found.`),
+          new NotFoundException(
+            `Film with ID "${updateFilmDTO._id}" not found.`,
+          ),
         );
-      await expect(controller.updateFilm(updateFilmDto)).rejects.toThrow(
+
+      await expect(controller.updateFilm(updateFilmDTO)).rejects.toThrow(
         NotFoundException,
       );
     });
   });
 
   describe('deleteFilm', () => {
-    it('should delete the film', async () => {
-      const deleteFilmDTO = { _id: new Types.ObjectId() };
-      jest.spyOn(service, 'deleteById').mockResolvedValue(mockFilm);
+    const deleteFilmDTO: DeleteFilmDTO = { _id: new Types.ObjectId() };
+    it('should delete the film and return a success message', async () => {
+      jest.spyOn(service, 'deleteById').mockResolvedValue(undefined);
+
       const result = await controller.deleteFilm(deleteFilmDTO);
-      expect(result).toEqual(mockFilm);
+
+      expect(result).toEqual({ message: 'Film deleted successfully' });
       expect(service.deleteById).toHaveBeenCalledWith(deleteFilmDTO);
     });
 
     it('should throw NotFoundException if film to delete is not found', async () => {
-      const deleteFilmDTO = { _id: new Types.ObjectId() };
       jest
         .spyOn(service, 'deleteById')
         .mockRejectedValue(
@@ -182,6 +189,7 @@ describe('FilmController', () => {
             `Film with ID "${deleteFilmDTO._id}" not found.`,
           ),
         );
+
       await expect(controller.deleteFilm(deleteFilmDTO)).rejects.toThrow(
         NotFoundException,
       );

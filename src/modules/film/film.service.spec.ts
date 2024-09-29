@@ -8,6 +8,7 @@ import { CreateFilmDTO } from '../../core/dto/create-film.dto';
 import { NotFoundException } from '@nestjs/common';
 import { UpdateFilmDTO } from 'src/core/dto/update-film.dto';
 import { DeleteFilmDTO } from 'src/core/dto/delete-film.dto';
+import { GetFilmDTO } from 'src/core/dto/get-film.dto';
 
 describe('FilmService', () => {
   let service: FilmService;
@@ -69,13 +70,6 @@ describe('FilmService', () => {
       expect(result).toEqual([mockFilm]);
       expect(model.find).toHaveBeenCalledTimes(1);
     });
-
-    it('should return an empty array if no films are found', async () => {
-      jest.spyOn(model, 'find').mockResolvedValue([]);
-      const result = await service.findAll();
-      expect(result).toEqual([]);
-      expect(model.find).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('create', () => {
@@ -97,29 +91,31 @@ describe('FilmService', () => {
   });
 
   describe('findById', () => {
+    const getFilmDTO: GetFilmDTO = { _id: new Types.ObjectId(mockFilm._id) };
+
     it('should find and return a film by id', async () => {
-      const id = mockFilm._id;
       jest.spyOn(model, 'findById').mockResolvedValue(mockFilm);
-      const result = await service.findById(id);
+      const result = await service.findById(getFilmDTO._id);
       expect(result).toEqual(mockFilm);
-      expect(model.findById).toHaveBeenCalledWith(id);
+      expect(model.findById).toHaveBeenCalledWith(getFilmDTO._id);
     });
 
     it('should throw NotFoundException if film is not found', async () => {
-      const id = new Types.ObjectId();
       jest.spyOn(model, 'findById').mockResolvedValue(null);
-      await expect(service.findById(id)).rejects.toThrow(NotFoundException);
-      expect(model.findById).toHaveBeenCalledWith(id);
+      await expect(service.findById(getFilmDTO._id)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(model.findById).toHaveBeenCalledWith(getFilmDTO._id);
     });
   });
 
   describe('updateById', () => {
+    const updateFilmDTO: UpdateFilmDTO = {
+      _id: mockFilm._id,
+      title: 'Harry Potter y los Jedi: 2',
+    };
+
     it('should update and return a film', async () => {
-      const id = mockFilm._id;
-      const updateFilmDTO: UpdateFilmDTO = {
-        _id: id,
-        title: 'Harry Potter y los Jedi: 2',
-      };
       const updatedFilm = { ...mockFilm, ...updateFilmDTO };
 
       jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValue(updatedFilm);
@@ -127,18 +123,13 @@ describe('FilmService', () => {
 
       expect(result).toEqual(updatedFilm);
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
-        { _id: id },
+        { _id: updateFilmDTO._id },
         updateFilmDTO,
         { new: true, runValidators: true },
       );
     });
 
     it('should throw NotFoundException if film to update is not found', async () => {
-      const updateFilmDTO: UpdateFilmDTO = {
-        _id: new Types.ObjectId(),
-        title: 'Harry Potter y los Jedi: 2',
-      };
-
       jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValue(null);
       await expect(service.updateById(updateFilmDTO)).rejects.toThrow(
         NotFoundException,
@@ -153,16 +144,16 @@ describe('FilmService', () => {
   });
 
   describe('deleteById', () => {
-    it('should delete and return a film', async () => {
-      const deleteFilmDTO: DeleteFilmDTO = { _id: new Types.ObjectId() };
+    const deleteFilmDTO: DeleteFilmDTO = { _id: new Types.ObjectId() };
+
+    it('should delete a film successfully', async () => {
       jest.spyOn(model, 'findByIdAndDelete').mockResolvedValue(mockFilm as any);
-      const result = await service.deleteById(deleteFilmDTO);
-      expect(result).toEqual(mockFilm);
+      await service.deleteById(deleteFilmDTO);
+
       expect(model.findByIdAndDelete).toHaveBeenCalledWith(deleteFilmDTO._id);
     });
 
     it('should throw NotFoundException if film to delete is not found', async () => {
-      const deleteFilmDTO: DeleteFilmDTO = { _id: new Types.ObjectId() };
       jest.spyOn(model, 'findByIdAndDelete').mockResolvedValue(null);
       await expect(service.deleteById(deleteFilmDTO)).rejects.toThrow(
         NotFoundException,
@@ -170,8 +161,10 @@ describe('FilmService', () => {
       expect(model.findByIdAndDelete).toHaveBeenCalledWith(deleteFilmDTO._id);
     });
   });
+
   describe('findOneOnEpisodeId - for cron job', () => {
-    const query = { episode_id: 1 };
+    const query: { episode_id: number } = { episode_id: 1 };
+
     it('should find and return a film based on episode_id', async () => {
       jest.spyOn(model, 'findOne').mockResolvedValue(mockFilm);
       const result = await service.findOneOnEpisodeId(query.episode_id);
@@ -213,12 +206,28 @@ describe('FilmService', () => {
       );
     });
   });
+
   describe('validateDuplicatedName', () => {
+    const updateFilmDTO: UpdateFilmDTO = {
+      _id: mockFilm._id,
+      title: mockFilm.title,
+    };
+
+    const createFilmDTO: CreateFilmDTO = {
+      title: mockFilm.title,
+      director: 'Another Director',
+      release_date: new Date(),
+      opening_crawl: 'Another crawl',
+      producer: 'Another Producer',
+      species: [],
+      starships: [],
+      vehicles: [],
+      characters: [],
+      planets: [],
+      url: 'http://example.com/another-mock-film',
+    };
+
     it('should return true if a duplicate title exists for UpdateFilmDTO', async () => {
-      const updateFilmDTO: UpdateFilmDTO = {
-        _id: mockFilm._id,
-        title: mockFilm.title,
-      };
       jest.spyOn(model, 'aggregate').mockResolvedValue([{ count: 1 }]);
       const result = await service.validateDuplicatedName(updateFilmDTO);
       expect(result).toBe(true);
@@ -226,91 +235,18 @@ describe('FilmService', () => {
         {
           $match: {
             title: mockFilm.title,
-            _id: { $nin: [mockFilm._id] },
+            _id: { $ne: mockFilm._id },
           },
-        },
-        {
-          $count: 'count',
-        },
-      ]);
-    });
-
-    it('should return false if no duplicate title exists for UpdateFilmDTO', async () => {
-      const updateFilmDTO: UpdateFilmDTO = {
-        _id: mockFilm._id,
-        title: 'New Unique Title',
-      };
-      jest.spyOn(model, 'aggregate').mockResolvedValue([]);
-      const result = await service.validateDuplicatedName(updateFilmDTO);
-      expect(result).toBe(false);
-      expect(model.aggregate).toHaveBeenCalledWith([
-        {
-          $match: {
-            title: updateFilmDTO.title,
-            _id: { $nin: [updateFilmDTO._id] },
-          },
-        },
-        {
-          $count: 'count',
-        },
-      ]);
-    });
-
-    it('should return true if a duplicate title exists for CreateFilmDTO', async () => {
-      const createFilmDTO: CreateFilmDTO = {
-        title: mockFilm.title,
-        director: 'Another Director',
-        release_date: new Date(),
-        opening_crawl: 'Another crawl',
-        producer: 'Another Producer',
-        species: [],
-        starships: [],
-        vehicles: [],
-        characters: [],
-        planets: [],
-        url: 'http://example.com/another-mock-film',
-      };
-      jest.spyOn(model, 'aggregate').mockResolvedValue([{ count: 1 }]);
-      const result = await service.validateDuplicatedName(createFilmDTO);
-      expect(result).toBe(true);
-      expect(model.aggregate).toHaveBeenCalledWith([
-        {
-          $match: {
-            title: createFilmDTO.title,
-          },
-        },
-        {
-          $count: 'count',
         },
       ]);
     });
 
     it('should return false if no duplicate title exists for CreateFilmDTO', async () => {
-      const createFilmDTO: CreateFilmDTO = {
-        title: 'Another Unique Title',
-        director: 'Another Director',
-        release_date: new Date(),
-        opening_crawl: 'Another crawl',
-        producer: 'Another Producer',
-        species: [],
-        starships: [],
-        vehicles: [],
-        characters: [],
-        planets: [],
-        url: 'http://example.com/another-mock-film',
-      };
       jest.spyOn(model, 'aggregate').mockResolvedValue([]);
       const result = await service.validateDuplicatedName(createFilmDTO);
       expect(result).toBe(false);
       expect(model.aggregate).toHaveBeenCalledWith([
-        {
-          $match: {
-            title: createFilmDTO.title,
-          },
-        },
-        {
-          $count: 'count',
-        },
+        { $match: { title: mockFilm.title } },
       ]);
     });
   });

@@ -53,7 +53,7 @@ export class AuthService {
     return { token };
   }
 
-  async validateDuplicateEmail(signUpDTO): Promise<boolean> {
+  async validateDuplicateEmail(signUpDTO: SignUpDTO): Promise<boolean> {
     const isDuplicated = await this.userModel.findOne({
       email: signUpDTO.email,
     });
