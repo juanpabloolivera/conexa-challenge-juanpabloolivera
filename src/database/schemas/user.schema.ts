@@ -7,16 +7,20 @@ import { RolesEnum } from '../../core/enum/roles.enum';
   versionKey: false,
 })
 export class User extends Document {
-  @Prop()
+  @Prop({ required: true, type: String })
   name: string;
 
-  @Prop({ unique: [true, 'Duplicate email entered'] })
+  @Prop({
+    unique: true,
+    required: true,
+    type: String,
+  })
   email: string;
 
-  @Prop()
+  @Prop({ required: true, type: String })
   password: string;
 
-  @Prop({ enum: RolesEnum })
+  @Prop({ enum: RolesEnum, required: true, type: String })
   role: string;
 }
 

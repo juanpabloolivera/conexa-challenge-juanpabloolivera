@@ -1,25 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FilmResponseDTO {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   _id: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   episode_id: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   opening_crawl: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   director: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   producer: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   release_date: Date;
 
   @ApiProperty({ type: [String] })
@@ -37,9 +37,9 @@ export class FilmResponseDTO {
   @ApiProperty({ type: [String] })
   planets: string[];
 
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   isCustomEpisode: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   url: string;
 }

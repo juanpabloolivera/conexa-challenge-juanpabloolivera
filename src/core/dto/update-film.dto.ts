@@ -13,36 +13,36 @@ import { Types } from 'mongoose';
 import { Transform } from 'class-transformer';
 
 export class UpdateFilmDTO {
-  @ApiProperty({ required: true, type: 'string' })
+  @ApiProperty({ required: true, type: String })
   @IsMongoId()
   @IsNotEmpty()
   _id: Types.ObjectId;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   @IsNotEmpty()
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   opening_crawl?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   director?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   producer?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: Date })
   @IsOptional()
   @IsNotEmpty()
   @IsDateString()
@@ -57,42 +57,42 @@ export class UpdateFilmDTO {
   })
   release_date?: Date;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String] })
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   species?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String] })
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   starships?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String] })
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   vehicles?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String] })
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   characters?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String] })
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   planets?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
   @IsNotEmpty()
   @IsUrl()

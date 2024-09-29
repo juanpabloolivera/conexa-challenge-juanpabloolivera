@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
 export class DeleteFilmDTO {
-  @ApiProperty({ required: true, type: 'string' })
+  @ApiProperty({ type: String })
   @IsMongoId()
   @IsNotEmpty()
   _id: Types.ObjectId;

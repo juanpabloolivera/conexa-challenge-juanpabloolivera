@@ -6,22 +6,22 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
   versionKey: false,
 })
 export class Film {
-  @Prop()
+  @Prop({ required: true, type: String })
   title: string;
 
-  @Prop()
+  @Prop({ required: false, type: Number })
   episode_id: number;
 
-  @Prop()
+  @Prop({ required: true, type: String })
   opening_crawl: string;
 
-  @Prop()
+  @Prop({ required: true, type: String })
   director: string;
 
-  @Prop()
+  @Prop({ required: true, type: String })
   producer: string;
 
-  @Prop()
+  @Prop({ required: true, type: Date })
   release_date: Date;
 
   @Prop([String])
@@ -39,10 +39,10 @@ export class Film {
   @Prop([String])
   planets: string[];
 
-  @Prop()
+  @Prop({ required: true, type: String })
   url: string;
 
-  @Prop()
+  @Prop({ required: true, type: Boolean })
   isCustomEpisode: boolean;
 }
 
