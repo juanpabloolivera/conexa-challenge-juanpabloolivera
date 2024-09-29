@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private userModel: Model<User>,
   ) {
     super({
-      //Extrae token de header |  Authorization - Bearer
+      //Extracts token from header |  Authorization - Bearer
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     });

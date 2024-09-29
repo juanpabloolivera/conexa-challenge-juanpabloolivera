@@ -18,10 +18,8 @@ export class FilmService {
     return this.filmModel.find();
   }
 
-  async create(
-    film: CreateFilmDTO & { isCustomEpisode: boolean },
-  ): Promise<IFilm> {
-    return this.filmModel.create(film);
+  async create(film: CreateFilmDTO): Promise<IFilm> {
+    return this.filmModel.create({ ...film, isCustomEpisode: true }); //All user created films have 'isCustomEpisode' as 'true' to differentiate from API ones
   }
 
   async findById(id: Types.ObjectId): Promise<IFilm> {
@@ -95,10 +93,10 @@ export class FilmService {
     return isDuplicated.length > 0;
   }
 
-  async findOrInsert(query: Partial<IFilm>, filmData: IFilm): Promise<IFilm> {
+  async updateOrInsert(query: Partial<IFilm>, filmData: IFilm): Promise<IFilm> {
     return this.filmModel.findOneAndUpdate(
       query,
-      { $set: filmData }, // Use `$set` to update existing fields
+      { $set: filmData },
       { upsert: true, new: true, runValidators: true },
     );
   }

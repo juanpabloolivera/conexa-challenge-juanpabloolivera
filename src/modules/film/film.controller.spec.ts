@@ -72,7 +72,7 @@ describe('FilmController', () => {
 
   describe('createFilm', () => {
     it('should create and return a new film', async () => {
-      const createFilmDto: CreateFilmDTO = {
+      const createFilmDTO: CreateFilmDTO = {
         title: 'Harry Potter y Arturito',
         director: 'Ricardo Fort',
         release_date: new Date('2024-01-01'),
@@ -85,15 +85,19 @@ describe('FilmController', () => {
         planets: [],
         url: 'http://test.com/harry-potter',
       };
+
+      const createdFilm: IFilm = {
+        ...createFilmDTO,
+        isCustomEpisode: true,
+        _id: new Types.ObjectId(),
+      };
+
       jest.spyOn(service, 'validateDuplicatedName').mockResolvedValue(false);
 
-      jest.spyOn(service, 'create').mockResolvedValue(mockFilm);
-      const result = await controller.createFilm(createFilmDto);
-      expect(result).toEqual(mockFilm);
-      expect(service.create).toHaveBeenCalledWith({
-        ...createFilmDto,
-        isCustomEpisode: true,
-      });
+      jest.spyOn(service, 'create').mockResolvedValue(createdFilm);
+      const result = await controller.createFilm(createFilmDTO);
+      expect(result).toEqual(createdFilm);
+      expect(service.create).toHaveBeenCalledWith(createFilmDTO);
     });
   });
 

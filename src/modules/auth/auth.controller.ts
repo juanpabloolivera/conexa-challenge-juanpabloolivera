@@ -9,6 +9,7 @@ import { SignUpDTO } from '../../core/dto/signup.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  //Endpoint para registro de nuevos usuarios.
   @Post('/signup')
   async signUp(@Body() signUpDTO: SignUpDTO): Promise<{ token: string }> {
     const isDuplicated = await this.authService.validateDuplicateEmail(
@@ -22,6 +23,7 @@ export class AuthController {
     return this.authService.signUp(signUpDTO);
   }
 
+  //Endpoint para login de usuarios y obtención de token de acceso.
   @Post('/login')
   login(@Body() loginDTO: LoginDTO): Promise<{ token: string }> {
     return this.authService.login(loginDTO);

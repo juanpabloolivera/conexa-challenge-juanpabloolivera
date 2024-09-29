@@ -35,12 +35,14 @@ import {
 export class FilmController {
   constructor(private filmService: FilmService) {}
 
+  //Endpoint para obtener la lista de películas.
   @Get()
   @GetAllFilmsSwagger()
   async getAllFilms(): Promise<IFilm[]> {
     return this.filmService.findAll();
   }
 
+  //Endpoint para crear una nueva película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Post()
   @Roles(RolesEnum.ADMIN)
   @CreateFilmSwagger()
@@ -56,9 +58,10 @@ export class FilmController {
         "There's already a film with that name. Copyright. Elegí otro",
       );
     }
-    return this.filmService.create({ ...film, isCustomEpisode: true }); //All user created films have 'isCustomEpisode' as 'true' to differentiate from API ones
+    return this.filmService.create(film);
   }
 
+  //Endpoint para obtener los detalles de una película específica. Solo los "Usuarios Regulares" deberían tener acceso a este endpoint.
   @Get(':id')
   @Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
@@ -69,6 +72,7 @@ export class FilmController {
     return this.filmService.findById(_id);
   }
 
+  //Endpoint para actualizar la información de una película existente. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Put()
   @Roles(RolesEnum.ADMIN)
   @UpdateFilmSwagger()
@@ -88,6 +92,7 @@ export class FilmController {
     return this.filmService.updateById(film);
   }
 
+  //Endpoint para eliminar una película. Solo los "Administradores" deberían tener acceso a este endpoint.
   @Delete()
   @Roles(RolesEnum.ADMIN)
   @DeleteFilmSwagger()

@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../../database/schemas/user.schema';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { RolesEnum } from '../../core/enum/roles.enum';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -65,7 +66,7 @@ describe('AuthService', () => {
         name: signUpDto.name,
         email: signUpDto.email,
         password: 'hashedPassword',
-        role: 'REGULAR_USER',
+        role: RolesEnum.REGULAR_USER,
       });
       expect(mockJwtService.sign).toHaveBeenCalledWith({ id: mockUser._id });
       expect(result).toEqual({ token: 'mockedToken' });

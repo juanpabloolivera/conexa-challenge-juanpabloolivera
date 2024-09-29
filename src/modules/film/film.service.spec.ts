@@ -187,11 +187,11 @@ describe('FilmService', () => {
     });
   });
 
-  describe('findOrInsert', () => {
+  describe('updateOrInsert', () => {
     it('should find an existing film', async () => {
       const query = { title: 'Harry Potter y Obi Wan Kenobi' };
       jest.spyOn(model, 'findOneAndUpdate').mockResolvedValue(mockFilm as any);
-      const result = await service.findOrInsert(query, mockFilm);
+      const result = await service.updateOrInsert(query, mockFilm);
       expect(result).toEqual(mockFilm);
       expect(model.findOneAndUpdate).toHaveBeenCalledWith(
         query,
@@ -204,7 +204,7 @@ describe('FilmService', () => {
       const query = { title: 'Harry: soy tu padre' };
       const newFilm = { ...mockFilm, title: 'Harry: soy tu hijo' };
       jest.spyOn(model, 'findOneAndUpdate').mockResolvedValue(newFilm as any);
-      const result = await service.findOrInsert(query, newFilm);
+      const result = await service.updateOrInsert(query, newFilm);
       expect(result).toEqual(newFilm);
       expect(model.findOneAndUpdate).toHaveBeenCalledWith(
         query,

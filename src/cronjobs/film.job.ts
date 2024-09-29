@@ -14,7 +14,8 @@ export class FilmJob {
     private readonly httpService: HttpService,
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  //Endpoint o cron que sincronice el listado de películas que devuelve la API de Stars Wars. Solo para "Administradores" en caso de ser un endpoint.
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async updateFilmCollection() {
     this.logger.log('Initializing film collection update cron job...');
     try {
@@ -27,22 +28,18 @@ export class FilmJob {
       this.logger.log(`Fetched ${films.length} films from API.`);
 
       let insertedCount = 0;
-      let updatedCount = 0;
 
       for (const film of films) {
-        const beforeOperation = await this.filmService.findOneOnEpisodeId(
+        const isFilm = await this.filmService.findOneOnEpisodeId(
           film.episode_id,
         );
 
-        const result: IFilm = await this.filmService.findOrInsert(
+        const result: IFilm = await this.filmService.updateOrInsert(
           { episode_id: film.episode_id },
           { ...film, isCustomEpisode: false },
         );
 
-        if (beforeOperation) {
-          updatedCount++;
-          this.logger.log(`Updated film: ${result.title}`);
-        } else {
+        if (!isFilm) {
           insertedCount++;
           this.logger.log(`Inserted new film: ${result.title}`);
         }
@@ -50,7 +47,6 @@ export class FilmJob {
 
       this.logger.log(`Film collection update completed.`);
       this.logger.log(`Inserted ${insertedCount} new films.`);
-      this.logger.log(`Updated ${updatedCount} existing films.`);
     } catch (error) {
       this.logger.error('Error updating film collection:', error);
     }
