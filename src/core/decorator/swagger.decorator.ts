@@ -5,6 +5,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { FilmResponseDTO } from '../dto/response-film.dto';
+import { AuthResponseDTO } from '../dto/response-auth.dto';
 
 export function GetAllFilmsSwagger(): MethodDecorator {
   return applyDecorators(
@@ -80,6 +81,32 @@ export function DeleteFilmSwagger(): MethodDecorator {
     ApiNotFoundResponse({
       description: 'Film with ID <id> not found.',
       status: 404,
+    }),
+  );
+}
+
+export function LoginSwagger(): MethodDecorator {
+  return applyDecorators(
+    ApiOkResponse({
+      description: 'Success - login',
+      type: AuthResponseDTO,
+    }),
+    ApiResponse({
+      status: 401,
+      description: 'Invalid email or password',
+    }),
+  );
+}
+
+export function SignupSwagger(): MethodDecorator {
+  return applyDecorators(
+    ApiOkResponse({
+      description: 'Success - signup',
+      type: AuthResponseDTO,
+    }),
+    ApiResponse({
+      status: 400,
+      description: "There's already an user with that email. Elegí otro",
     }),
   );
 }

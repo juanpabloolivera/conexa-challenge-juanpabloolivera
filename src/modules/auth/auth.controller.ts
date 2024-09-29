@@ -3,6 +3,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDTO } from '../../core/dto/login.dto';
 import { SignUpDTO } from '../../core/dto/signup.dto';
+import {
+  SignupSwagger,
+  LoginSwagger,
+} from '../../core/decorator/swagger.decorator';
 
 @ApiTags('Auth Endpoints')
 @Controller('auth')
@@ -10,6 +14,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   //Endpoint para registro de nuevos usuarios.
+  @SignupSwagger()
   @Post('/signup')
   async signUp(@Body() signUpDTO: SignUpDTO): Promise<{ token: string }> {
     const isDuplicated = await this.authService.validateDuplicateEmail(
@@ -24,6 +29,7 @@ export class AuthController {
   }
 
   //Endpoint para login de usuarios y obtención de token de acceso.
+  @LoginSwagger()
   @Post('/login')
   login(@Body() loginDTO: LoginDTO): Promise<{ token: string }> {
     return this.authService.login(loginDTO);

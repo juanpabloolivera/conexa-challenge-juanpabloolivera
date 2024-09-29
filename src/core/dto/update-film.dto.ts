@@ -4,10 +4,8 @@ import {
   IsArray,
   IsDateString,
   IsUrl,
-  IsNumber,
   IsMongoId,
   IsOptional,
-  IsBoolean,
   IsISO8601,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -15,7 +13,7 @@ import { Types } from 'mongoose';
 import { Transform } from 'class-transformer';
 
 export class UpdateFilmDTO {
-  @ApiProperty()
+  @ApiProperty({ required: true, type: 'string' })
   @IsMongoId()
   @IsNotEmpty()
   _id: Types.ObjectId;

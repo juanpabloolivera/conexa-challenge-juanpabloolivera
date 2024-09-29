@@ -9,62 +9,62 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateFilmDTO {
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
   opening_crawl: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
   director: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
   producer: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsDateString()
   release_date: Date;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   species: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   starships: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   vehicles: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   characters: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   planets: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNotEmpty()
   @IsUrl()
   @IsOptional()
