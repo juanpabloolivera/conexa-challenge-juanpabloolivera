@@ -38,6 +38,10 @@ export function GetFilmSwagger(): MethodDecorator {
       type: FilmResponseDTO,
     }),
     ApiResponse({
+      status: 400,
+      description: 'Invalid id.',
+    }),
+    ApiResponse({
       status: 403,
       description:
         'Forbidden: Only users with role REGULAR_USER can access this route.',
