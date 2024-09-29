@@ -9,6 +9,7 @@ import {
   UseGuards,
   BadRequestException,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,9 +36,10 @@ import {
 @UseGuards(AuthGuard(), AllowByRoleGuard)
 @ApiBearerAuth()
 export class FilmController {
-  private readonly logger = new Logger(FilmController.name);
-
-  constructor(private filmService: FilmService) {}
+  constructor(
+    private filmService: FilmService,
+    @Inject(Logger) private readonly logger: Logger,
+  ) {}
 
   @Get()
   @GetAllFilmsSwagger()

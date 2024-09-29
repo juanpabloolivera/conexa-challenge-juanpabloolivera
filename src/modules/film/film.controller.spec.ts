@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@nestjs/common';
 import { FilmController } from './film.controller';
 import { FilmService } from './film.service';
 import { CreateFilmDTO } from '../../core/dto/create-film.dto';
@@ -37,6 +38,11 @@ describe('FilmController', () => {
     validateDuplicatedName: jest.fn(),
   };
 
+  const emptyLogger = {
+    log: jest.fn(),
+    error: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FilmController],
@@ -44,6 +50,10 @@ describe('FilmController', () => {
         {
           provide: FilmService,
           useValue: mockFilmService,
+        },
+        {
+          provide: Logger,
+          useValue: emptyLogger,
         },
       ],
     })

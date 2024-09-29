@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { BadRequestException } from '@nestjs/common';
@@ -12,6 +13,11 @@ describe('AuthController', () => {
     validateDuplicateEmail: jest.fn(),
   };
 
+  const emptyLogger = {
+    log: jest.fn(),
+    error: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -19,6 +25,10 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: mockAuthService,
+        },
+        {
+          provide: Logger,
+          useValue: emptyLogger,
         },
       ],
     }).compile();

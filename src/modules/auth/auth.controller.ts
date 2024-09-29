@@ -4,6 +4,7 @@ import {
   Post,
   BadRequestException,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -17,9 +18,10 @@ import {
 @ApiTags('Auth Endpoints')
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
-
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(Logger) private readonly logger: Logger,
+  ) {}
 
   @SignupSwagger()
   @Post('/signup')
