@@ -45,14 +45,23 @@ $ npm run test
 
 ## API Documentation
 
-Access the API documentation via Swagger at `http://localhost:3000/api` or `deployed`.
+Access the API documentation via Swagger at `http://localhost:3000/api` or `https://conexa-challenge-juanpabloolivera.onrender.com/api`.
 
 ## Usage Example: Using cURL
 
 To access protected routes (all except login/signup) include the `Authorization` header with your JWT token:
 
+### Local
+
 ```bash
 curl -X GET http://localhost:3000/film \
+-H "Authorization: bearer <token>"
+```
+
+### Deployed
+
+```bash
+curl -X GET https://conexa-challenge-juanpabloolivera.onrender.com/film \
 -H "Authorization: bearer <token>"
 ```
 
