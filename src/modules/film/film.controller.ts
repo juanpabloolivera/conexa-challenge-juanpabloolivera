@@ -73,7 +73,7 @@ export class FilmController {
   }
 
   @Get(':id')
-  //@Roles(RolesEnum.REGULAR_USER)
+  @Roles(RolesEnum.REGULAR_USER)
   @GetFilmSwagger()
   async getFilm(@Param('id') id: string): Promise<IFilm> {
     try {
