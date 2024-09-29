@@ -50,14 +50,12 @@ export class FilmService {
     return updatedFilm;
   }
 
-  async deleteById(film: DeleteFilmDTO): Promise<IFilm> {
+  async deleteById(film: DeleteFilmDTO): Promise<void> {
     const deletedFilm = await this.filmModel.findByIdAndDelete(film._id);
 
     if (!deletedFilm) {
       throw new NotFoundException(`Film with ID "${film._id}" not found.`);
     }
-
-    return deletedFilm;
   }
   async validateDuplicatedName(
     query: UpdateFilmDTO | CreateFilmDTO,
@@ -65,7 +63,7 @@ export class FilmService {
     const matchCondition: {
       $match: {
         title: string;
-        _id?: { $nin: [Types.ObjectId] };
+        _id?: { $ne: Types.ObjectId };
       };
     } =
       '_id' in query
@@ -73,7 +71,7 @@ export class FilmService {
           {
             $match: {
               title: query.title,
-              _id: { $nin: [query._id] },
+              _id: { $ne: query._id },
             },
           }
         : //Is 'CreateFilmDTO' -> searches duplicate
@@ -83,12 +81,7 @@ export class FilmService {
             },
           };
 
-    const isDuplicated = await this.filmModel.aggregate([
-      matchCondition,
-      {
-        $count: 'count',
-      },
-    ]);
+    const isDuplicated = await this.filmModel.aggregate([matchCondition]);
 
     return isDuplicated.length > 0;
   }

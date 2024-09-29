@@ -118,10 +118,11 @@ export class FilmController {
   @Delete()
   @Roles(RolesEnum.ADMIN)
   @DeleteFilmSwagger()
-  async deleteFilm(@Body() film: DeleteFilmDTO): Promise<IFilm> {
+  async deleteFilm(@Body() film: DeleteFilmDTO): Promise<{ message: string }> {
     try {
       this.logger.log('DELETE /film - Deleting film');
-      return await this.filmService.deleteById(film);
+      await this.filmService.deleteById(film);
+      return { message: 'Film deleted successfully' };
     } catch (error) {
       this.logger.error(`Error in DELETE /film: ${error.message}`, error.stack);
       throw error;
