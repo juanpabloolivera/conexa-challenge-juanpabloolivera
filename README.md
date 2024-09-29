@@ -61,6 +61,11 @@ Access the API documentation via Swagger:
 
 **Deployed Version**: https://conexa-challenge-juanpabloolivera.onrender.com/api
 
+#### Validations
+
+- **Film Creation/Update**: Duplicate name.
+- **User Creation**: Duplicate email.
+
 ## Usage Example: Using cURL
 
 To access protected routes (all except login/signup) include the `Authorization` header with your JWT token:
