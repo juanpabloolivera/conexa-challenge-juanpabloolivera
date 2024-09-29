@@ -2,6 +2,8 @@
 
 ## Installation
 
+**Note:** To avoid warnings make sure you are using Node.js version **18.13.0** or higher and npm version **8.19.4** or higher.
+
 Install the necessary dependencies:
 
 ```bash
