@@ -51,24 +51,4 @@ export class FilmJob {
       this.logger.error('Error updating film collection:', error);
     }
   }
-  @Cron(CronExpression.EVERY_10_MINUTES) // Runs every 14 minutes
-  async keepServerAlive() {
-    this.logger.log('Call to keep server alive...');
-    try {
-      await firstValueFrom(
-        this.httpService.get(
-          'https://conexa-challenge-juanpabloolivera.onrender.com/film/',
-          {
-            headers: {
-              Accept: '*/*',
-              'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
-              Authorization: `bearer ${process.env.ADMIN_USER_TOKEN}`,
-            },
-          },
-        ),
-      );
-    } catch (error) {
-      this.logger.error('Error fetching film data:', error);
-    }
-  }
 }
