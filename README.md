@@ -33,7 +33,7 @@ JWT_SECRET=<jwt_secret>
 To connect to MongoDB (e.g., via Compass), use the following connection string:
 
 ```plaintext
-mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/challenge-db?retryWrites=true&w=majority&appName=conexa-challenge&authSource=admin
+mongodb+srv://<MONGODB_USER>:<MONGODB_PASSWORD>@<MONGODB_HOST>/challenge-db?retryWrites=true&w=majority&appName=conexa-challenge&authSource=admin
 ```
 
 ## Running the app
